@@ -6,7 +6,11 @@ final class YouTubeLongUrlParser implements YouTubeUrlParserInterface {
 
 	private const HOST = 'www.youtube.com';
 	private const PATH = '/watch';
-	private const TIMESTAMP_GET = 't';
+	private const TIMESTAMP_GET = [
+		't',
+		'time_continue',
+		'start',
+	];
 	private const ID_GET = 'v';
 
 	/**
@@ -24,11 +28,13 @@ final class YouTubeLongUrlParser implements YouTubeUrlParserInterface {
 			return null;
 		}
 
-		if (!array_key_exists(self::TIMESTAMP_GET, $getParams) || $getParams[self::TIMESTAMP_GET] === '') {
-			return new YouTubeUrl($getParams[self::ID_GET]);
+		foreach (self::TIMESTAMP_GET as $timeGet) {
+			if (array_key_exists($timeGet, $getParams) && $getParams[$timeGet] !== '') {
+				return new YouTubeUrl($getParams[self::ID_GET], $getParams[$timeGet]);
+			}
 		}
 
-		return new YouTubeUrl($getParams[self::ID_GET], $getParams[self::TIMESTAMP_GET]);
+		return new YouTubeUrl($getParams[self::ID_GET]);
 	}
 
 }

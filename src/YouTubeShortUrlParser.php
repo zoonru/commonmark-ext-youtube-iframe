@@ -5,7 +5,11 @@ namespace Zoon\CommonMark\Ext\YouTubeIframe;
 final class YouTubeShortUrlParser implements YouTubeUrlParserInterface {
 
 	private const HOST = 'youtu.be';
-	private const TIMESTAMP_GET = 't';
+	private const TIMESTAMP_GET = [
+		't',
+		'time_continue',
+		'start',
+	];
 
 	/**
 	 * @param string $url
@@ -23,11 +27,13 @@ final class YouTubeShortUrlParser implements YouTubeUrlParserInterface {
 
 		parse_str((string)parse_url($url, PHP_URL_QUERY), $getParams);
 
-		if (!array_key_exists(self::TIMESTAMP_GET, $getParams) || $getParams[self::TIMESTAMP_GET] === '') {
-			return new YouTubeUrl($videoId);
+		foreach (self::TIMESTAMP_GET as $timeGet) {
+			if (array_key_exists($timeGet, $getParams) && $getParams[$timeGet] !== '') {
+				return new YouTubeUrl($videoId, $getParams[$timeGet]);
+			}
 		}
 
-		return new YouTubeUrl($videoId, $getParams[self::TIMESTAMP_GET]);
+		return new YouTubeUrl($videoId);
 	}
 
 }
