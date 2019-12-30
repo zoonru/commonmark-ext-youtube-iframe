@@ -6,21 +6,21 @@ use League\CommonMark\Inline\Element\AbstractInline;
 
 final class YouTubeIframe extends AbstractInline {
 
-	private $videoId;
+	private $url;
 
 	/**
 	 * YouTubeIframe constructor.
-	 * @param string $videoId
+	 * @param YouTubeUrlInterface $youTubeUrl
 	 */
-	public function __construct(string $videoId) {
-		$this->videoId = $videoId;
+	public function __construct(YouTubeUrlInterface $youTubeUrl) {
+		$this->url = $youTubeUrl;
 	}
 
 	/**
-	 * @return string
+	 * @return YouTubeUrlInterface
 	 */
-	public function getVideoId(): string {
-		return $this->videoId;
+	public function getUrl(): YouTubeUrlInterface {
+		return $this->url;
 	}
 
 }
