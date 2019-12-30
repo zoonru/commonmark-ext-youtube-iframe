@@ -7,7 +7,20 @@ use League\CommonMark\Inline\Element\Link;
 
 final class YouTubeIframeProcessor {
 
-	private const PATTERN = '%^https://(?:www\.youtube\.com/watch\?v=|youtu\.be/)([^&#]+)%';
+	private $youTubeUrlParsers = [];
+
+	/**
+	 * YouTubeIframeProcessor constructor.
+	 * @param YouTubeUrlParserInterface[] $youTubeUrlParsers
+	 */
+	public function __construct(array $youTubeUrlParsers) {
+		foreach ($youTubeUrlParsers as $parser) {
+			if (!($parser instanceof YouTubeUrlParserInterface)) {
+				throw new \TypeError();
+			}
+		}
+		$this->youTubeUrlParsers = $youTubeUrlParsers;
+	}
 
 	/**
 	 * @param DocumentParsedEvent $e
@@ -19,17 +32,14 @@ final class YouTubeIframeProcessor {
 				/** @var Link $link */
 				$link = $event->getNode();
 
-				$matched = preg_match(
-					self::PATTERN,
-					$link->getUrl(),
-					$matches
-				);
-
-				if ($matched !== 1) {
-					continue;
+				/** @var YouTubeUrlParserInterface $parser */
+				foreach ($this->youTubeUrlParsers as $youTubeParser) {
+					$youTubeUrl = $youTubeParser->parse($link->getUrl());
+					if ($youTubeUrl === null) {
+						continue;
+					}
+					$link->replaceWith(new YouTubeIframe($youTubeUrl));
 				}
-
-				$link->replaceWith(new YouTubeIframe($matches[1]));
 			}
 		}
 	}

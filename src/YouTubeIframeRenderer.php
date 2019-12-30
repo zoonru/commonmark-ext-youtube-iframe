@@ -32,10 +32,15 @@ final class YouTubeIframeRenderer implements InlineRendererInterface {
 		if (!($inline instanceof YouTubeIframe)) {
 			throw new \InvalidArgumentException('Incompatible inline type: ' . get_class($inline));
 		}
+		$src = "https://www.youtube.com/embed/{$inline->getUrl()->getVideoId()}";
+		$startTimestamp = $inline->getUrl()->getStartTimestamp();
+		if ($startTimestamp !== null) {
+			$src .= "?start={$startTimestamp}";
+		}
 		return new HtmlElement('iframe', [
 			'width' => $this->width,
 			'height' => $this->height,
-			'src' => "https://www.youtube.com/embed/{$inline->getVideoId()}",
+			'src' => $src,
 			'frameborder' => 0,
 			'allowfullscreen' => $this->allowFullScreen,
 		]);
