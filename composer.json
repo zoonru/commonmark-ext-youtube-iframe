@@ -10,7 +10,7 @@
         "iframe"
     ],
     "homepage": "https://github.com/zoonru/commonmark-ext-youtube-iframe",
-    "license": "GPL-3.0-only",
+    "license": "MIT",
     "require": {
         "php" : "^7.1 || ^8.0",
         "league/commonmark": "^1.0"
