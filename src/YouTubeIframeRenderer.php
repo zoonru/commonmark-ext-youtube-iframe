@@ -2,16 +2,17 @@
 
 namespace Zoon\CommonMark\Ext\YouTubeIframe;
 
-use League\CommonMark\ElementRendererInterface;
-use League\CommonMark\HtmlElement;
-use League\CommonMark\Inline\Element\AbstractInline;
-use League\CommonMark\Inline\Renderer\InlineRendererInterface;
+use InvalidArgumentException;
+use League\CommonMark\Node\Node;
+use League\CommonMark\Renderer\ChildNodeRendererInterface;
+use League\CommonMark\Renderer\NodeRendererInterface;
+use League\CommonMark\Util\HtmlElement;
 
-final class YouTubeIframeRenderer implements InlineRendererInterface {
-
-	private $width;
-	private $height;
-	private $allowFullScreen;
+final class YouTubeIframeRenderer implements NodeRendererInterface
+{
+	private string $width;
+	private string $height;
+	private bool $allowFullScreen;
 
 	/**
 	 * YouTubeIframeRenderer constructor.
@@ -19,7 +20,8 @@ final class YouTubeIframeRenderer implements InlineRendererInterface {
 	 * @param string $height
 	 * @param bool $allowFullScreen
 	 */
-	public function __construct(string $width, string $height, bool $allowFullScreen) {
+	public function __construct(string $width, string $height, bool $allowFullScreen)
+    {
 		$this->width = $width;
 		$this->height = $height;
 		$this->allowFullScreen = $allowFullScreen;
@@ -28,21 +30,25 @@ final class YouTubeIframeRenderer implements InlineRendererInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer) {
-		if (!($inline instanceof YouTubeIframe)) {
-			throw new \InvalidArgumentException('Incompatible inline type: ' . get_class($inline));
+	public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
+		if (!($node instanceof YouTubeIframe)) {
+			throw new InvalidArgumentException('Incompatible inline type: ' . get_class($node));
 		}
-		$src = "https://www.youtube.com/embed/{$inline->getUrl()->getVideoId()}";
-		$startTimestamp = $inline->getUrl()->getStartTimestamp();
+
+		$src = "https://www.youtube.com/embed/{$node->getUrl()->getVideoId()}";
+		$startTimestamp = $node->getUrl()->getStartTimestamp();
+
 		if ($startTimestamp !== null) {
-			$src .= "?start={$startTimestamp}";
+			$src .= "?start=$startTimestamp";
 		}
-		return new HtmlElement('iframe', [
-			'width' => $this->width,
-			'height' => $this->height,
-			'src' => $src,
-			'frameborder' => 0,
-			'allowfullscreen' => $this->allowFullScreen,
-		]);
+
+		return new HtmlElement('iframe', array_merge([
+            'width' => $this->width,
+            'height' => $this->height,
+            'src' => $src,
+            'frameborder' => "0",
+        ], $this->allowFullScreen ? [
+            'allowfullscreen' => "1",
+        ] : []));
 	}
 }

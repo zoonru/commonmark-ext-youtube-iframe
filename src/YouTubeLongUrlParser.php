@@ -2,8 +2,8 @@
 
 namespace Zoon\CommonMark\Ext\YouTubeIframe;
 
-final class YouTubeLongUrlParser implements YouTubeUrlParserInterface {
-
+final class YouTubeLongUrlParser implements YouTubeUrlParserInterface
+{
 	private const HOST = 'www.youtube.com';
 	private const PATH = '/watch';
 	private const TIMESTAMP_GET = [
@@ -17,7 +17,8 @@ final class YouTubeLongUrlParser implements YouTubeUrlParserInterface {
 	 * @param string $url
 	 * @return YouTubeUrlInterface|null
 	 */
-	public function parse(string $url): ?YouTubeUrlInterface {
+	public function parse(string $url): ?YouTubeUrlInterface
+    {
 		if (parse_url($url, PHP_URL_HOST) !== self::HOST || parse_url($url, PHP_URL_PATH) !== self::PATH) {
 			return null;
 		}
@@ -36,5 +37,4 @@ final class YouTubeLongUrlParser implements YouTubeUrlParserInterface {
 
 		return new YouTubeUrl($getParams[self::ID_GET]);
 	}
-
 }

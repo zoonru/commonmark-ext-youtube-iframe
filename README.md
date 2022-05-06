@@ -8,6 +8,11 @@ Extension for [league/commonmark](https://github.com/thephpleague/commonmark) to
 composer require zoon/commonmark-ext-youtube-iframe
 ```
 
+## Test
+```
+phpunit --bootstrap vendor/autoload.php
+```
+
 ## Example
 
 ``` php

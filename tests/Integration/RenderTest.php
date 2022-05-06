@@ -4,45 +4,66 @@ declare(strict_types=1);
 
 namespace Zoon\CommonMark\Ext\YouTubeIframe\Tests\Integration;
 
+use League\CommonMark\CommonMarkConverter;
 use PHPUnit\Framework\TestCase;
+use Zoon\CommonMark\Ext\YouTubeIframe\YouTubeIframeExtension;
 
 final class RenderTest extends TestCase
 {
     public function testShortUrlConversion(): void
     {
-        $environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
-        $environment->addExtension(new \Zoon\CommonMark\Ext\YouTubeIframe\YouTubeIframeExtension());
+        $converter = new CommonMarkConverter([
+            'youtube_iframe' => [
+                'width' => '600',
+                'height' => '300',
+                'allowfullscreen' => true,
+            ],
+        ]);
 
-        $converter = new \League\CommonMark\CommonMarkConverter([
-            'youtube_iframe_width' => 600,
-            'youtube_iframe_height' => 300,
-            'youtube_iframe_allowfullscreen' => true,
-        ], $environment);
-
-        $output = $converter->convertToHtml('Check this: [](https://youtu.be/mVnSpPMgoWM?t=10)');
+        $converter->getEnvironment()->addExtension(new YouTubeIframeExtension());
+        $output = $converter->convert('Check this: [](https://youtu.be/mVnSpPMgoWM?t=10)');
 
         $this->assertEquals(
             '<p>Check this: <iframe width="600" height="300" src="https://www.youtube.com/embed/mVnSpPMgoWM?start=10" frameborder="0" allowfullscreen="1"></iframe></p>' . PHP_EOL,
-            $output
+            $output->getContent(),
         );
     }
 
     public function testLongUrlConversion(): void
     {
-        $environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
-        $environment->addExtension(new \Zoon\CommonMark\Ext\YouTubeIframe\YouTubeIframeExtension());
+        $converter = new CommonMarkConverter([
+            'youtube_iframe' => [
+                'width' => '600',
+                'height' => '300',
+                'allowfullscreen' => true,
+            ],
+        ]);
 
-        $converter = new \League\CommonMark\CommonMarkConverter([
-            'youtube_iframe_width' => 600,
-            'youtube_iframe_height' => 300,
-            'youtube_iframe_allowfullscreen' => true,
-        ], $environment);
-
-        $output = $converter->convertToHtml('Check this: [](https://www.youtube.com/watch?v=mVnSpPMgoWM&t=10)');
+        $converter->getEnvironment()->addExtension(new YouTubeIframeExtension());
+        $output = $converter->convert('Check this: [](https://www.youtube.com/watch?v=mVnSpPMgoWM&t=10)');
 
         $this->assertEquals(
             '<p>Check this: <iframe width="600" height="300" src="https://www.youtube.com/embed/mVnSpPMgoWM?start=10" frameborder="0" allowfullscreen="1"></iframe></p>' . PHP_EOL,
-            $output
+            $output->getContent(),
+        );
+    }
+
+    public function testShortUrlNoFullScreenConversion(): void
+    {
+        $converter = new CommonMarkConverter([
+            'youtube_iframe' => [
+                'width' => '600',
+                'height' => '300',
+                'allowfullscreen' => false,
+            ],
+        ]);
+
+        $converter->getEnvironment()->addExtension(new YouTubeIframeExtension());
+        $output = $converter->convert('Check this: [](https://youtu.be/mVnSpPMgoWM?t=10)');
+
+        $this->assertEquals(
+            '<p>Check this: <iframe width="600" height="300" src="https://www.youtube.com/embed/mVnSpPMgoWM?start=10" frameborder="0"></iframe></p>' . PHP_EOL,
+            $output->getContent(),
         );
     }
 }
