@@ -8,7 +8,7 @@ use League\CommonMark\Extension\ConfigurableExtensionInterface;
 use League\Config\ConfigurationBuilderInterface;
 use Nette\Schema\Expect;
 
-final class YouTubeIframeExtension implements ConfigurableExtensionInterface
+class YouTubeIframeExtension implements ConfigurableExtensionInterface
 {
     /**
      * @param ConfigurationBuilderInterface $builder
@@ -19,7 +19,8 @@ final class YouTubeIframeExtension implements ConfigurableExtensionInterface
         $builder->addSchema('youtube_iframe', Expect::structure([
             'width' => Expect::string('640'),
             'height' => Expect::string('480'),
-            'allowfullscreen' => Expect::bool(true),
+            'wrapper_class' => Expect::string()->nullable(),
+            'allow_full_screen' => Expect::bool(true),
         ]));
     }
 
@@ -36,10 +37,11 @@ final class YouTubeIframeExtension implements ConfigurableExtensionInterface
             new YouTubeShortUrlParser(),
         ]));
 
-        $environment->addRenderer(YouTubeIframe::class, new YouTubeIframeRenderer(
-            $configuration->get('youtube_iframe.width'),
-            $configuration->get('youtube_iframe.height'),
-            $configuration->get('youtube_iframe.allowfullscreen'),
-        ));
+        $environment->addRenderer(YouTubeIframe::class, new YouTubeIframeRenderer([
+            'width' => $configuration->get('youtube_iframe.width'),
+            'height' => $configuration->get('youtube_iframe.height'),
+            'wrapper_class' => $configuration->get('youtube_iframe.wrapper_class'),
+            'allow_full_screen' => $configuration->get('youtube_iframe.allow_full_screen'),
+        ]));
     }
 }

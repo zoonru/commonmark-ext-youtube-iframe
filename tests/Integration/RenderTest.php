@@ -16,7 +16,7 @@ final class RenderTest extends TestCase
             'youtube_iframe' => [
                 'width' => '600',
                 'height' => '300',
-                'allowfullscreen' => true,
+                'allow_full_screen' => true,
             ],
         ]);
 
@@ -35,7 +35,7 @@ final class RenderTest extends TestCase
             'youtube_iframe' => [
                 'width' => '600',
                 'height' => '300',
-                'allowfullscreen' => true,
+                'allow_full_screen' => true,
             ],
         ]);
 
@@ -54,7 +54,7 @@ final class RenderTest extends TestCase
             'youtube_iframe' => [
                 'width' => '600',
                 'height' => '300',
-                'allowfullscreen' => false,
+                'allow_full_screen' => false,
             ],
         ]);
 
@@ -63,6 +63,26 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             '<p>Check this: <iframe width="600" height="300" src="https://www.youtube.com/embed/mVnSpPMgoWM?start=10" frameborder="0"></iframe></p>' . PHP_EOL,
+            $output->getContent(),
+        );
+    }
+
+    public function testShortUrlWrapperDivConversion(): void
+    {
+        $converter = new CommonMarkConverter([
+            'youtube_iframe' => [
+                'width' => '600',
+                'height' => '300',
+                'allow_full_screen' => false,
+                'wrapper_class' => 'youtube-embed',
+            ],
+        ]);
+
+        $converter->getEnvironment()->addExtension(new YouTubeIframeExtension());
+        $output = $converter->convert('Check this: [](https://youtu.be/mVnSpPMgoWM?t=10)');
+
+        $this->assertEquals(
+            '<p>Check this: <div class="youtube-embed"><iframe width="600" height="300" src="https://www.youtube.com/embed/mVnSpPMgoWM?start=10" frameborder="0"></iframe></div></p>' . PHP_EOL,
             $output->getContent(),
         );
     }

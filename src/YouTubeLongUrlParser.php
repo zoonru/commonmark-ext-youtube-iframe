@@ -11,6 +11,7 @@ final class YouTubeLongUrlParser implements YouTubeUrlParserInterface
 		'time_continue',
 		'start',
 	];
+
 	private const ID_GET = 'v';
 
 	/**
