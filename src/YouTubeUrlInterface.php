@@ -2,8 +2,8 @@
 
 namespace Zoon\CommonMark\Ext\YouTubeIframe;
 
-interface YouTubeUrlInterface {
-
+interface YouTubeUrlInterface
+{
 	/**
 	 * @return string
 	 */
@@ -13,5 +13,4 @@ interface YouTubeUrlInterface {
 	 * @return string|null
 	 */
 	public function getStartTimestamp(): ?string;
-
 }

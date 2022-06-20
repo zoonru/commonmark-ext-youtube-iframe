@@ -2,25 +2,28 @@
 
 namespace Zoon\CommonMark\Ext\YouTubeIframe;
 
-use League\CommonMark\Inline\Element\AbstractInline;
+use League\CommonMark\Node\Node;
 
-final class YouTubeIframe extends AbstractInline {
+final class YouTubeIframe extends Node
+{
+	private YouTubeUrlInterface $url;
 
-	private $url;
+    /**
+     * @param YouTubeUrlInterface $url
+     * @return $this
+     */
+    public function setUrl(YouTubeUrlInterface $url): YouTubeIframe
+    {
+        $this->url = $url;
 
-	/**
-	 * YouTubeIframe constructor.
-	 * @param YouTubeUrlInterface $youTubeUrl
-	 */
-	public function __construct(YouTubeUrlInterface $youTubeUrl) {
-		$this->url = $youTubeUrl;
-	}
+        return $this;
+    }
 
 	/**
 	 * @return YouTubeUrlInterface
 	 */
-	public function getUrl(): YouTubeUrlInterface {
+	public function getUrl(): YouTubeUrlInterface
+    {
 		return $this->url;
 	}
-
 }

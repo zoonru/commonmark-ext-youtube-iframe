@@ -2,8 +2,8 @@
 
 namespace Zoon\CommonMark\Ext\YouTubeIframe;
 
-final class YouTubeShortUrlParser implements YouTubeUrlParserInterface {
-
+final class YouTubeShortUrlParser implements YouTubeUrlParserInterface
+{
 	private const HOST = 'youtu.be';
 	private const TIMESTAMP_GET = [
 		't',
@@ -15,7 +15,8 @@ final class YouTubeShortUrlParser implements YouTubeUrlParserInterface {
 	 * @param string $url
 	 * @return YouTubeUrlInterface|null
 	 */
-	public function parse(string $url): ?YouTubeUrlInterface {
+	public function parse(string $url): ?YouTubeUrlInterface
+    {
 		if (parse_url($url, PHP_URL_HOST) !== self::HOST) {
 			return null;
 		}
@@ -35,5 +36,4 @@ final class YouTubeShortUrlParser implements YouTubeUrlParserInterface {
 
 		return new YouTubeUrl($videoId);
 	}
-
 }

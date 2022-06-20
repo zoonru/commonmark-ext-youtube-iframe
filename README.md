@@ -8,20 +8,29 @@ Extension for [league/commonmark](https://github.com/thephpleague/commonmark) to
 composer require zoon/commonmark-ext-youtube-iframe
 ```
 
+## Test
+```
+./vendor/bin/phpunit
+```
+
 ## Example
 
 ``` php
-$environment = \League\CommonMark\Environment::createCommonMarkEnvironment();
-$environment->addExtension(new \Zoon\CommonMark\Ext\YouTubeIframe\YouTubeIframeExtension());
+use League\CommonMark\CommonMarkConverter;
+use Zoon\CommonMark\Ext\YouTubeIframe\YouTubeIframeExtension;
 
-$converter = new \League\CommonMark\CommonMarkConverter([
-	'youtube_iframe_width' => 600,
-	'youtube_iframe_height' => 300,
-	'youtube_iframe_allowfullscreen' => true,
-], $environment);
+$converter = new CommonMarkConverter([
+    'youtube_iframe' => [
+        'width' => '600',
+        'height' => '300',
+        'allow_full_screen' => true,
+    ],
+]);
 
-echo $converter->convertToHtml('Check this: [](https://youtu.be/mVnSpPMgoWM?t=10)');
-echo $converter->convertToHtml('Check this: [](https://www.youtube.com/watch?v=mVnSpPMgoWM&t=10)');
+$converter->getEnvironment()->addExtension(new YouTubeIframeExtension());
+
+echo $converter->convert('Check this: [](https://youtu.be/mVnSpPMgoWM?t=10)')->getContent();
+echo $converter->convert('Check this: [](https://www.youtube.com/watch?v=mVnSpPMgoWM&t=10)')->getContent();
 ```
 
 ``` bash

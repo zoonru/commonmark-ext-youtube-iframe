@@ -12,8 +12,8 @@
     "homepage": "https://github.com/zoonru/commonmark-ext-youtube-iframe",
     "license": "MIT",
     "require": {
-        "php" : "^7.1 || ^8.0",
-        "league/commonmark": "^1.0"
+        "php": "^7.4 || ^8.0",
+        "league/commonmark": "^2.2"
     },
     "autoload": {
         "psr-4": {

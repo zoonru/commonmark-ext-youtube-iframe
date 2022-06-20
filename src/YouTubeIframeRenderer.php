@@ -2,47 +2,58 @@
 
 namespace Zoon\CommonMark\Ext\YouTubeIframe;
 
-use League\CommonMark\ElementRendererInterface;
-use League\CommonMark\HtmlElement;
-use League\CommonMark\Inline\Element\AbstractInline;
-use League\CommonMark\Inline\Renderer\InlineRendererInterface;
+use InvalidArgumentException;
+use League\CommonMark\Node\Node;
+use League\CommonMark\Renderer\ChildNodeRendererInterface;
+use League\CommonMark\Renderer\NodeRendererInterface;
+use League\CommonMark\Util\HtmlElement;
 
-final class YouTubeIframeRenderer implements InlineRendererInterface {
+final class YouTubeIframeRenderer implements NodeRendererInterface
+{
+    private string $width;
+    private string $height;
+    private ?string $wrapperClass;
+    private bool $allowFullScreen;
 
-	private $width;
-	private $height;
-	private $allowFullScreen;
+    /**
+     * YouTubeIframeRenderer constructor.
+     * @param array $props
+     */
+    public function __construct(array $props = [])
+    {
+        $this->width = $props['width'] ?? '';
+        $this->height = $props['height'] ?? '';
+        $this->wrapperClass = $props['wrapper_class'] ?? null;
+        $this->allowFullScreen = $props['allow_full_screen'] ?? true;
+    }
 
-	/**
-	 * YouTubeIframeRenderer constructor.
-	 * @param string $width
-	 * @param string $height
-	 * @param bool $allowFullScreen
-	 */
-	public function __construct(string $width, string $height, bool $allowFullScreen) {
-		$this->width = $width;
-		$this->height = $height;
-		$this->allowFullScreen = $allowFullScreen;
-	}
+    /**
+     * @inheritDoc
+     */
+    public function render(Node $node, ChildNodeRendererInterface $childRenderer): HtmlElement
+    {
+        if (!($node instanceof YouTubeIframe)) {
+            throw new InvalidArgumentException('Incompatible inline type: ' . get_class($node));
+        }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer) {
-		if (!($inline instanceof YouTubeIframe)) {
-			throw new \InvalidArgumentException('Incompatible inline type: ' . get_class($inline));
-		}
-		$src = "https://www.youtube.com/embed/{$inline->getUrl()->getVideoId()}";
-		$startTimestamp = $inline->getUrl()->getStartTimestamp();
-		if ($startTimestamp !== null) {
-			$src .= "?start={$startTimestamp}";
-		}
-		return new HtmlElement('iframe', [
-			'width' => $this->width,
-			'height' => $this->height,
-			'src' => $src,
-			'frameborder' => 0,
-			'allowfullscreen' => $this->allowFullScreen,
-		]);
-	}
+        $src = "https://www.youtube.com/embed/{$node->getUrl()->getVideoId()}";
+        $startTimestamp = $node->getUrl()->getStartTimestamp();
+
+        if ($startTimestamp !== null) {
+            $src .= "?start=$startTimestamp";
+        }
+
+        $iframeElement = new HtmlElement('iframe', array_merge([
+            'width' => $this->width,
+            'height' => $this->height,
+            'src' => $src,
+            'frameborder' => "0",
+        ], $this->allowFullScreen ? [
+            'allowfullscreen' => "1",
+        ] : []));
+
+        return is_null($this->wrapperClass) ? $iframeElement : new HtmlElement('div', [
+            'class' => $this->wrapperClass,
+        ], $iframeElement);
+    }
 }
